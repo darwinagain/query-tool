@@ -4,13 +4,11 @@ A command line tool to benchmark query performance across multiple workers again
 
 ## Installation
 
-- [Golang 1.18](https://golang.org/doc/install)
+- [Golang 1.16+](https://golang.org/doc/install)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [golang-migrate](https://github.com/golang-migrate/migrate) - `go get -tags 'postgres' -u https://github.com/golang-migrate/migrate`
+- [golang-migrate](https://github.com/golang-migrate/migrate) - `go get -u -d github.com/golang-migrate/migrate/cmd/migrate`
 
-#### Setting Up Your Development Environment
-
-# Setting Up Your Local Environment
+### Setting Up Your Development Environment
 
 Create docker container for dependencies:
 
@@ -24,18 +22,20 @@ Run `psql postgres://postgres:pgpass@localhost:5432/homework?sslmode=disable -c 
 
 # Usage
 
-To see all available flags run:
+### Running the Tool Locally
+
+To see all available flags run the following command:
 
 ```
 go run cmd/query-tool.go --help
 ```
 
-Using the existing file `query_params.csv` as input and your desired number of workers run:
+Using the existing csv file in this project `query_params.csv` as input and your desired number of workers run the following command:
 
 ```
 go run cmd/query-tool.go -f query_params.csv -w 4
 ```
 
-## Testing
+### Testing
 
 `Coming Soon`
