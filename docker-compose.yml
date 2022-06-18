@@ -1,0 +1,19 @@
+version: "2"
+
+services:
+  timescaledb:
+    image: timescale/timescaledb-ha:pg14-latest
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: homework
+      POSTGRES_PASSWORD: pgpass
+      POSTGRES_USER: postgres
+
+  migrations:
+    image: migrate/migrate
+    command: -database postgres://pguser:pgpass@database:5432/homework?sslmode=disable -path /migrations up
+    depends_on:
+      - timescaledb
+    volumes:
+      - ./migrations:/migrations
