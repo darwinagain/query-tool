@@ -36,6 +36,17 @@ Using the existing csv file in this project `query_params.csv` as input and your
 go run cmd/query-tool.go -f query_params.csv -w 4
 ```
 
+You will see log messages while the csv file is read and the queries are run and an eventual output similar to the following:
+
+```
+2022/06/18 15:03:40 number of queries run: 200
+2022/06/18 15:03:40 total processing time: 773.220341ms
+2022/06/18 15:03:40 minimum query processing time: 3.507686ms
+2022/06/18 15:03:40 median query processing time: 3.813921ms
+2022/06/18 15:03:40 average query processing time: 3.866101ms
+2022/06/18 15:03:40 maxiumum query processing time: 5.081698ms
+```
+
 ### Testing
 
 `Coming Soon`
