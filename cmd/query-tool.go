@@ -12,7 +12,7 @@ import (
 
 func main() {
 	var file = flag.String("f", "", "path to csv file to use for input")
-	var workers = flag.Int("w", 1, "number of concurrent workers")
+	var workers = flag.Int("w", 1, "number of concurrent workers to use when running queries")
 	flag.Parse()
 
 	log.Printf("file=%v, workers=%d\n", *file, *workers)
