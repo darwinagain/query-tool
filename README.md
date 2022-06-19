@@ -10,17 +10,13 @@ A command line tool to benchmark query performance across multiple workers again
 
 ### Setting Up Your Development Environment
 
-Create docker container for dependencies:
+Create docker container for dependencies and populate the `cpu_usage` table with data:
 
 ```
-docker-compose up -d
+make run
 ```
 
-Run `make db_setup` to set up the database, timescale extension, and table
-
-Run `psql postgres://postgres:pgpass@localhost:5432/homework?sslmode=disable -c "\COPY cpu_usage FROM cpu_usage.csv CSV HEADER"` to populate the `cpu_usage` table
-
-# Usage
+## Usage
 
 ### Running the Tool Locally
 

@@ -1,19 +1,32 @@
 version: "2"
 
 services:
-  timescaledb:
+  database:
     image: timescale/timescaledb-ha:pg14-latest
+    networks:
+      - main
     ports:
       - 5432:5432
     environment:
       POSTGRES_DB: homework
       POSTGRES_PASSWORD: pgpass
       POSTGRES_USER: postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "homework", "-h", "localhost", "-U", "postgres" ]
+      interval: 10s
+      timeout: 3s
+      retries: 5
 
   migrations:
     image: migrate/migrate
-    command: -database postgres://pguser:pgpass@database:5432/homework?sslmode=disable -path /migrations up
+    networks:
+      - main
+    command: -database postgres://postgres:pgpass@database:5432/homework?sslmode=disable -path /migrations up
     depends_on:
-      - timescaledb
+      database:
+        condition: service_healthy
     volumes:
       - ./migrations:/migrations
+
+networks:
+      main:

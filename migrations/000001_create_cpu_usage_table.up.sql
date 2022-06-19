@@ -1,4 +1,4 @@
-\ c homework CREATE EXTENSION IF NOT EXISTS timescaledb;
+CREATE EXTENSION IF NOT EXISTS timescaledb;
 
 CREATE TABLE IF NOT EXISTS cpu_usage(
   ts TIMESTAMPTZ,
