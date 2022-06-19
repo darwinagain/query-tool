@@ -4,13 +4,15 @@ A command line tool to benchmark query performance across multiple workers again
 
 ## Installation
 
+You may need to install these if you do not already have them:
+
 - [Golang 1.16+](https://golang.org/doc/install)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [golang-migrate](https://github.com/golang-migrate/migrate) - `go get -u -d github.com/golang-migrate/migrate/cmd/migrate`
 
 ### Setting Up Your Development Environment
 
-Create docker container for dependencies and populate the `cpu_usage` table with data:
+To begin, create docker containers for dependencies and populate the `cpu_usage` table with data by running the following command:
 
 ```
 make run
