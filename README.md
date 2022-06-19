@@ -8,7 +8,8 @@ You may need to install these if you do not already have them:
 
 - [Golang 1.16+](https://golang.org/doc/install)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
-- [golang-migrate](https://github.com/golang-migrate/migrate) - `go get -u -d github.com/golang-migrate/migrate/cmd/migrate`
+- [PostgreSQL](https://www.postgresql.org/download/)
+- [golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate#installation)
 
 ### Setting Up Your Development Environment
 

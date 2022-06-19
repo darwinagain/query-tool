@@ -15,4 +15,4 @@ db_populate:
 
 run:
 	docker-compose up -d && \
-	psql $(PSQL_URL) -c "\COPY cpu_usage FROM './migrations/cpu_usage.csv' CSV HEADER"
+	psql $(PSQL_URL) -c "\COPY cpu_usage FROM './seeding/cpu_usage.csv' CSV HEADER"
