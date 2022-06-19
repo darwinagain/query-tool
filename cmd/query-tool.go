@@ -30,11 +30,18 @@ func main() {
 
 func Run(filePath *string, workers *int) models.BenchmarkStats {
 	log.Println("reading query parameters...")
+	// check headers
+	err := utility.CheckHeaders(filePath)
+	if err != nil {
+		msg := fmt.Sprintf("error reading csv file: %v", err)
+		log.Fatal(msg)
+	}
+
 	// read input file and convert contents to query parameters objects
 	parameters, err := utility.ReadFile(filePath)
 	if err != nil {
 		msg := fmt.Sprintf("error reading csv file: %v", err)
-		panic(msg)
+		log.Fatal(msg)
 	}
 
 	// sort parameters by hostname to ensure all queries for same host go to the same worker

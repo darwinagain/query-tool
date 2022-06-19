@@ -67,5 +67,5 @@ make test
 1. Make unit tests more robust to handle error and edge cases
 2. Add more benchmark statistics
 3. Export the results from all queries to a csv file or database table for historical inspection
-4. Make query parameters more dynamic to allow for additional or less fields to be required in the input csv and return detail errors if required parameters are missing
+4. Make query parameters more dynamic to allow for additional or less fields to be required in the input csv and return more detailed errors if required parameters are missing
 5. Seed the cpu_usage table with the data from query_params via docker-compose instead of using the psql command
