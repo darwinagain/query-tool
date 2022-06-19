@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	var file = flag.String("f", "", "path to csv file to use for input")
+	var file = flag.String("f", "", "path to csv file to use for input with query parameters (hostname, start_time, end_time)")
 	var workers = flag.Int("w", 1, "number of concurrent workers to use when running queries")
 	flag.Parse()
 
