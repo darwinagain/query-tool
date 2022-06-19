@@ -3,14 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"os"
 	"query-tool/internal/models"
 	"query-tool/internal/postgres"
 	"query-tool/internal/stats"
-
-	"github.com/gocarina/gocsv"
+	"query-tool/internal/utility"
 )
 
 func main() {
@@ -20,21 +17,33 @@ func main() {
 
 	log.Printf("file=%v, workers=%d\n", *file, *workers)
 
+	stats := Run(file, workers)
+
+	// output stats
+	log.Printf("number of queries run: %v\n", stats.QueriesRun)
+	log.Printf("total processing time: %v\n", stats.TotalTime)
+	log.Printf("minimum query processing time: %v\n", stats.MinimumTime)
+	log.Printf("median query processing time: %v\n", stats.MedianTime)
+	log.Printf("average query processing time: %v\n", stats.AverageTime)
+	log.Printf("maxiumum query processing time: %v\n", stats.MaximumTime)
+}
+
+func Run(filePath *string, workers *int) models.BenchmarkStats {
 	log.Println("reading query parameters...")
 	// read input file and convert contents to query parameters objects
-	parameters, err := readFile(file)
+	parameters, err := utility.ReadFile(filePath)
 	if err != nil {
 		msg := fmt.Sprintf("error reading csv file: %v", err)
 		panic(msg)
 	}
 
 	// sort parameters by hostname to ensure all queries for same host go to the same worker
-	sortedParameters := sortParameters(parameters)
+	sortedParameters := utility.SortParameters(parameters)
 
 	// create channels for workers
 	numJobs := len(sortedParameters)
 	jobs := make(chan []models.QueryParameter, numJobs)
-	results := make(chan []models.UsageOutput, numJobs)
+	results := make(chan []models.QueryResults, numJobs)
 
 	// set up workers
 	for w := 1; w <= *workers; w++ {
@@ -49,40 +58,34 @@ func main() {
 	close(jobs)
 
 	// get results from all workers
-	var usageOuputs []models.UsageOutput
+	var allResults []models.QueryResults
 	for a := 1; a <= numJobs; a++ {
 		r := <-results
-		usageOuputs = append(usageOuputs, r...)
+		allResults = append(allResults, r...)
 	}
-
-	// write query results to a csv file
-	writeResults(usageOuputs)
 
 	log.Println("calculating benchmark stats now...")
 	// get benchmark stats for queries run
-	stats, err := stats.GetStats(usageOuputs)
+	stats, err := stats.GetStats(allResults)
 	if err != nil {
 		msg := fmt.Sprintf("error calculating stats: %v", err)
 		panic(msg)
 	}
 
-	// output stats
-	log.Printf("number of queries run: %v\n", stats.QueriesRun)
-	log.Printf("total processing time: %v\n", stats.TotalTime)
-	log.Printf("minimum query processing time: %v\n", stats.MinimumTime)
-	log.Printf("median query processing time: %v\n", stats.MedianTime)
-	log.Printf("average query processing time: %v\n", stats.AverageTime)
-	log.Printf("maxiumum query processing time: %v\n", stats.MaximumTime)
+	return stats
 }
 
-func worker(id int, jobs <-chan []models.QueryParameter, results chan<- []models.UsageOutput) {
+func worker(id int, jobs <-chan []models.QueryParameter, results chan<- []models.QueryResults) {
 	for j := range jobs {
+		// connect to database
+		db := postgres.OpenConnection()
+		defer db.Close()
 		log.Println("worker", id, "started  job for", j[0].HostName)
 
 		// run queries
-		var usageOuputs []models.UsageOutput
+		var usageOuputs []models.QueryResults
 		for _, v := range j {
-			output, err := postgres.RunQuery(v)
+			output, err := postgres.RunQuery(db, v)
 			if err != nil {
 				log.Printf("error running query for %v: %v", v, err)
 			}
@@ -92,44 +95,4 @@ func worker(id int, jobs <-chan []models.QueryParameter, results chan<- []models
 		results <- usageOuputs
 		log.Println("worker", id, "finished job for", j[0].HostName)
 	}
-}
-
-func sortParameters(parameters []models.QueryParameter) map[string][]models.QueryParameter {
-	// sort parameters into map by host
-	sortedParameters := make(map[string][]models.QueryParameter)
-	for i := range parameters {
-		sortedParameters[parameters[i].HostName] = append(sortedParameters[parameters[i].HostName], parameters[i])
-	}
-
-	return sortedParameters
-}
-
-func readFile(filePath *string) ([]models.QueryParameter, error) {
-	// open file
-	file, err := os.Open(*filePath)
-	if err != nil {
-		return []models.QueryParameter{}, err
-	}
-	defer file.Close()
-
-	// convert file contents to QueryParameter objects
-	var queryParameters []models.QueryParameter
-	if err := gocsv.UnmarshalFile(file, &queryParameters); err != nil {
-		return []models.QueryParameter{}, err
-	}
-
-	return queryParameters, nil
-}
-
-func writeResults(usageOutputs []models.UsageOutput) error {
-	// export usage results to csv file
-	file, err := ioutil.TempFile("./", "query_results-*.csv")
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	gocsv.MarshalFile(&usageOutputs, file)
-
-	return nil
 }

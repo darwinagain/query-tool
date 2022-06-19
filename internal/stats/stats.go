@@ -6,9 +6,8 @@ import (
 	"time"
 )
 
-func GetStats(queryResults []models.UsageOutput) (models.BenchmarkStats, error) {
+func GetStats(queryResults []models.QueryResults) (models.BenchmarkStats, error) {
 	var times []time.Duration
-
 	// create list of query times
 	for _, v := range queryResults {
 		times = append(times, v.QueryTime)

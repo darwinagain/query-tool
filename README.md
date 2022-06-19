@@ -48,4 +48,22 @@ You will see log messages while the csv file is read and the queries are run and
 
 ### Testing
 
-`Coming Soon`
+**Note: Some tests require database access to run, so ensure the database is spun up in docker via `make run`**
+
+You can run all unit tests from the root directory of the project with the following command:
+
+```
+make test
+```
+
+### Assumptions
+
+1. The csv file used for input will always be in the format present in `query_params.csv` (hostname, start_time, end_time)
+2. The user will specify the full filepath for the input csv file
+3. The database will always be populated with the provided cpu_usage.csv file present in `/seeding`
+
+### With More Time I Would...
+
+1. Make unit tests more robust to handle error and edge cases
+2. Add more benchmark statistics
+3. Export the results from all queries to a csv file or database table for historical inspection

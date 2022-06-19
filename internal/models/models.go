@@ -9,11 +9,15 @@ type QueryParameter struct {
 }
 
 type UsageOutput struct {
-	HostName  string        `csv:"hostname"`
-	Minute    string        `csv:"minute"`
-	MaxUsage  string        `csv:"max_usage"`
-	MinUsage  string        `csv:"min_usage"`
-	QueryTime time.Duration `csv:"query_time"`
+	HostName string
+	Minute   string
+	MaxUsage string
+	MinUsage string
+}
+
+type QueryResults struct {
+	UsageOutputs []UsageOutput
+	QueryTime    time.Duration
 }
 
 type BenchmarkStats struct {
